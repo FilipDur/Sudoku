@@ -46,7 +46,7 @@ public class Menu implements ActionListener {
         bottomPanel.setLayout(null);
 
         menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        menuFrame.setTitle("Patnáctka-15 - Menu");
+        menuFrame.setTitle("Sudoku - Menu");
         menuFrame.setResizable(false);
         menuFrame.setSize(816, 839);
         menuFrame.setVisible(true);
@@ -58,10 +58,7 @@ public class Menu implements ActionListener {
 
     }
 
-    /**
-     *
-     * @param e the event to be processed
-     */
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == playButton) {
