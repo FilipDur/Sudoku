@@ -10,8 +10,6 @@ public class Menu implements ActionListener {
     JButton playButton = new JButton();
     JLabel label = new JLabel();
     JFrame menuFrame = new JFrame();
-    ImageIcon image = new ImageIcon("sudokuicon.jpg");
-
 
     Menu() {
 
@@ -51,19 +49,19 @@ public class Menu implements ActionListener {
         menuFrame.setSize(816, 839);
         menuFrame.setVisible(true);
         menuFrame.setLayout(null);
-        menuFrame.setIconImage(image.getImage());
         menuFrame.add(topPanel);
         menuFrame.add(midPanel);
         menuFrame.add(bottomPanel);
 
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == playButton) {
-            menuFrame.dispose();
-            Hra hra = new Hra();
-        }
+        SwingUtilities.invokeLater(() -> {
+            Frame frame = new Frame();
+            frame.setVisible(true);
+        });
     }
+
+
 }
