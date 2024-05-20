@@ -1,18 +1,10 @@
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 import javax.swing.event.MouseInputAdapter;
+import java.awt.font.FontRenderContext;
 
 public class Panel extends JPanel {
 
@@ -24,52 +16,74 @@ public class Panel extends JPanel {
     private int textSize;
     private Color bgColor;
     private Timer autoColorTimer;
+    private JPanel topPanel = new JPanel();
 
     public Panel() {
         this.setPreferredSize(new Dimension(540, 450));
         this.addMouseListener(new SudokuPanelMouseAdapter());
-        this.currentPuzzle = new Generator().generateRandomSudoku(PuzzleType.NINE_BY_NINE);
+        this.currentPuzzle = Puzzle.generateRandomPuzzle(9, 9, 3, 3, new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9"}, 40);
         selectedCol = -1;
         selectedRow = -1;
         panelWidth = 0;
         panelHeight = 0;
         textSize = 26;
         bgColor = Color.WHITE;
-    }
 
-    public Panel(Puzzle puzzle) {
-        this.setPreferredSize(new Dimension(540, 450));
-        this.addMouseListener(new SudokuPanelMouseAdapter());
-        this.currentPuzzle = puzzle;
-        selectedCol = -1;
-        selectedRow = -1;
-        panelWidth = 0;
-        panelHeight = 0;
-        textSize = 26;
-        bgColor = Color.WHITE;
+
+        startAutoChangeColor(1000);
+
+
+        JButton startButton = new JButton("Start Color Change");
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startAutoChangeColor(1000);
+            }
+        });
+
+        JButton stopButton = new JButton("Stop Color Change");
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopAutoChangeBackgroundColor();
+            }
+        });
+
+        topPanel.add(startButton);
+        topPanel.add(stopButton);
     }
 
     public void loadNewSudokuPuzzle(Puzzle puzzle) {
         this.currentPuzzle = puzzle;
+        repaint();
     }
 
     public void updateFontSize(int fontSize) {
         this.textSize = fontSize;
+        repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        drawBackground(g);
+        drawGrid(g);
+        drawNumbers(g);
+        highlightSelectedCell(g);
+    }
+
+    private void drawBackground(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(bgColor);
-
-        int slotWidth = this.getWidth() / currentPuzzle.getNumCols();
-        int slotHeight = this.getHeight() / currentPuzzle.getNumRows();
-
         panelWidth = (this.getWidth() / currentPuzzle.getNumCols()) * currentPuzzle.getNumCols();
         panelHeight = (this.getHeight() / currentPuzzle.getNumRows()) * currentPuzzle.getNumRows();
-
         g2d.fillRect(0, 0, panelWidth, panelHeight);
+    }
+
+    private void drawGrid(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        int slotWidth = this.getWidth() / currentPuzzle.getNumCols();
+        int slotHeight = this.getHeight() / currentPuzzle.getNumRows();
 
         g2d.setColor(Color.BLACK);
         for (int x = 0; x <= panelWidth; x += slotWidth) {
@@ -91,22 +105,34 @@ public class Panel extends JPanel {
                 g2d.drawLine(0, y, panelWidth, y);
             }
         }
+    }
 
+    private void drawNumbers(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
         Font font = new Font("Times New Roman", Font.PLAIN, textSize);
         g2d.setFont(font);
         FontRenderContext fontContext = g2d.getFontRenderContext();
+        int slotWidth = this.getWidth() / currentPuzzle.getNumCols();
+        int slotHeight = this.getHeight() / currentPuzzle.getNumRows();
+
         for (int row = 0; row < currentPuzzle.getNumRows(); row++) {
             for (int col = 0; col < currentPuzzle.getNumCols(); col++) {
-                if (!currentPuzzle.isSlotAvailable(row, col)) {
-                    int textWidth = (int) font.getStringBounds(currentPuzzle.getValue(row, col), fontContext).getWidth();
-                    int textHeight = (int) font.getStringBounds(currentPuzzle.getValue(row, col), fontContext).getHeight();
-                    g2d.drawString(currentPuzzle.getValue(row, col), (col * slotWidth) + ((slotWidth / 2) - (textWidth / 2)),
+                if (!currentPuzzle.EmptySlot(row, col)) {
+                    String value = currentPuzzle.Value(row, col);
+                    int textWidth = (int) font.getStringBounds(value, fontContext).getWidth();
+                    int textHeight = (int) font.getStringBounds(value, fontContext).getHeight();
+                    g2d.drawString(value, (col * slotWidth) + ((slotWidth / 2) - (textWidth / 2)),
                             (row * slotHeight) + ((slotHeight / 2) + (textHeight / 2)));
                 }
             }
         }
+    }
 
+    private void highlightSelectedCell(Graphics g) {
         if (selectedCol != -1 && selectedRow != -1) {
+            Graphics2D g2d = (Graphics2D) g;
+            int slotWidth = this.getWidth() / currentPuzzle.getNumCols();
+            int slotHeight = this.getHeight() / currentPuzzle.getNumRows();
             g2d.setColor(new Color(0.0f, 0.0f, 1.0f, 0.3f));
             g2d.fillRect(selectedCol * slotWidth, selectedRow * slotHeight, slotWidth, slotHeight);
         }
@@ -116,6 +142,9 @@ public class Panel extends JPanel {
         if (selectedCol != -1 && selectedRow != -1) {
             currentPuzzle.makeMove(selectedRow, selectedCol, buttonValue, true);
             repaint();
+            if (isPuzzleComplete()) {
+                showCompletionMessage();
+            }
         }
     }
 
@@ -162,4 +191,45 @@ public class Panel extends JPanel {
             autoColorTimer.stop();
         }
     }
+
+
+    public void setPanelSize(Dimension size) {
+        this.setPreferredSize(size);
+    }
+
+
+    public void setPuzzle(Puzzle puzzle) {
+        this.currentPuzzle = puzzle;
+        repaint();
+    }
+
+
+    public void resetSelectedCell() {
+        selectedCol = -1;
+        selectedRow = -1;
+        repaint();
+    }
+
+
+    public void updatePanelSize(int width, int height) {
+        this.panelWidth = width;
+        this.panelHeight = height;
+        this.setPreferredSize(new Dimension(width, height));
+        revalidate();
+        repaint();
+    }
+
+
+    private boolean isPuzzleComplete() {
+        return currentPuzzle.isSolved();
+    }
+
+
+    private void showCompletionMessage() {
+        if (isPuzzleComplete() == true) {
+            JOptionPane.showMessageDialog(this, "Congratulations! You've completed the puzzle!", "Puzzle Complete", JOptionPane.INFORMATION_MESSAGE);
+
+        }
+    }
+
 }
