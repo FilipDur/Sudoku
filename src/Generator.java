@@ -6,7 +6,7 @@ import java.util.Random;
 public class Generator {
 
     public Puzzle generateRandomSudoku(PuzzleType puzzleType) {
-        Puzzle puzzle = new Puzzle(puzzleType.getNumRows(), puzzleType.getNumCols(), puzzleType.getBoxWidth(), puzzleType.getBoxHeight(), puzzleType.getValidValues());
+        Puzzle puzzle = new Puzzle(puzzleType.getNumberofRows(), puzzleType.getNumberofCols(), puzzleType.getWidth(), puzzleType.getHeight(), puzzleType.getValidValues());
         Puzzle puzzleCopy = new Puzzle(puzzle);
 
         Random randomGenerator = new Random();
@@ -26,8 +26,8 @@ public class Generator {
             int randomRow = randomGenerator.nextInt(puzzle.getNumRows());
             int randomColumn = randomGenerator.nextInt(puzzle.getNumCols());
 
-            if (puzzle.isSlotAvailable(randomRow, randomColumn)) {
-                puzzle.makeMove(randomRow, randomColumn, puzzleCopy.getValue(randomRow, randomColumn), false);
+            if (puzzle.EmptySlot(randomRow, randomColumn)) {
+                puzzle.makeMove(randomRow, randomColumn, puzzleCopy.Value(randomRow, randomColumn), false);
                 i++;
             }
         }
@@ -41,7 +41,7 @@ public class Generator {
             return false;
         }
 
-        if (puzzle.isSlotAvailable(row, col)) {
+        if (puzzle.EmptySlot(row, col)) {
             for (String value : puzzle.getValidValues()) {
 
                 if (!puzzle.Row(row, value) && !puzzle.Col(col, value) && !puzzle.BoxNum(row, col, value)) {
