@@ -53,7 +53,7 @@ public class Puzzle {
     }
 
     public void makeMove(int row, int col, String value, boolean isMutable) {
-        if (isValidValue(value) && ValidMove(row, col, value) && Changeble(row, col)) {
+        if (RightValue(value) && ValidMove(row, col, value) && Mutable(row, col)) {
             this.board[row][col] = value;
             this.mutable[row][col] = isMutable;
         }
@@ -86,15 +86,15 @@ public class Puzzle {
         return false;
     }
 
-    public boolean isSlotAvailable(int row, int col) {
-        return inRange(row, col) && this.board[row][col].equals("") && Changeble(row, col);
+    public boolean EmptySlot(int row, int col) {
+        return inRange(row, col) && this.board[row][col].equals("") && Mutable(row, col);
     }
 
-    public boolean Changeble(int row, int col) {
+    public boolean Mutable(int row, int col) {
         return this.mutable[row][col];
     }
 
-    public String getValue(int row, int col) {
+    public String Value(int row, int col) {
         return inRange(row, col) ? this.board[row][col] : "";
     }
 
@@ -102,7 +102,7 @@ public class Puzzle {
         return this.board;
     }
 
-    private boolean isValidValue(String value) {
+    private boolean RightValue(String value) {
         return Arrays.stream(this.validValues).anyMatch(str -> str.equals(value));
     }
 
@@ -142,4 +142,86 @@ public class Puzzle {
             Arrays.fill(this.mutable[row], true);
         }
     }
+
+    public static Puzzle generateSolvedPuzzle(int numRows, int numCols, int boxWidth, int boxHeight, String[] validValues) {
+        Puzzle puzzle = new Puzzle(numRows, numCols, boxWidth, boxHeight, validValues);
+        solvePuzzle(puzzle, 0, 0);
+        return puzzle;
+    }
+
+    private static boolean solvePuzzle(Puzzle puzzle, int row, int col) {
+        if (row == puzzle.getNumRows()) {
+            row = 0;
+            if (++col == puzzle.getNumCols()) {
+                return true;
+            }
+        }
+        if (puzzle.EmptySlot(row, col)) {
+            for (String value : puzzle.getValidValues()) {
+                if (puzzle.ValidMove(row, col, value)) {
+                    puzzle.makeMove(row, col, value, true);
+                    if (solvePuzzle(puzzle, row + 1, col)) {
+                        return true;
+                    }
+                    puzzle.clearSlot(row, col);
+                }
+            }
+            return false;
+        }
+        return solvePuzzle(puzzle, row + 1, col);
+    }
+
+    public static Puzzle generateRandomPuzzle(int numRows, int numCols, int boxWidth, int boxHeight, String[] validValues, int numEmptyCells) {
+        Puzzle solvedPuzzle = generateSolvedPuzzle(numRows, numCols, boxWidth, boxHeight, validValues);
+        Puzzle randomPuzzle = new Puzzle(solvedPuzzle);
+        int remainingEmptyCells = numEmptyCells;
+        while (remainingEmptyCells > 0) {
+            int row = (int) (Math.random() * numRows);
+            int col = (int) (Math.random() * numCols);
+            if (randomPuzzle.Mutable(row, col)) {
+                randomPuzzle.clearSlot(row, col);
+                remainingEmptyCells--;
+            }
+        }
+        return randomPuzzle;
+    }
+
+    public boolean isSolved() {
+        for (String[] row : this.board) {
+            for (String cell : row) {
+                if (cell.isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isValid() {
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                if (!EmptySlot(row, col) && !ValidMove(row, col, Value(row, col))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isMutable(int row, int col) {
+        return Mutable(row, col);
+    }
+
+    public void setMutable(int row, int col, boolean isMutable) {
+        mutable[row][col] = isMutable;
+    }
+
+    public void setCell(int row, int col, String value) {
+        if (inRange(row, col) && RightValue(value)) {
+            board[row][col] = value;
+        }
+    }
+
+
 }
+
