@@ -8,7 +8,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 public class Frame extends JFrame {
-
     private JPanel buttonPanel;
     private Panel sudokuPanel;
     private JLabel timeDisplay;
@@ -31,14 +30,20 @@ public class Frame extends JFrame {
 
         startNewGame(PuzzleType.NINE_BY_NINE, 26);
     }
-
+    /**
+     * Sets up the frame's basic properties.
+     * These include the title, close operation, and minimum size.
+     */
     private void initializeFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Sudoku");
         this.setExtendedState(JFrame.MAXIMIZED_BOTH); // Set to fullscreen
         this.setMinimumSize(new Dimension(800, 600));
     }
-
+    /**
+     * Prepares the menu bar with 'Game' and 'Color' menus.
+     * These menus are added to the frame's menu bar.
+     */
     private void initializeMenu() {
         JMenuBar menuBar = new JMenuBar();
 
@@ -85,7 +90,10 @@ public class Frame extends JFrame {
         menuItem.addActionListener(actionListener);
         return menuItem;
     }
-
+    /**
+     * Sets up the main components of the frame.
+     * This includes the main panel, button panel, sudoku panel, and info panel.
+     */
     private void initializeComponents() {
         mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setPreferredSize(new Dimension(800, 600));
@@ -142,6 +150,10 @@ public class Frame extends JFrame {
 
         this.add(mainPanel);
     }
+    /**
+     * Initializes the game and color change timers.
+     * The game timer updates elapsed time, and the color change timer adjusts the frame's color scheme.
+     */
 
     private void initializeTimers() {
         elapsedTime = 0;
@@ -157,7 +169,11 @@ public class Frame extends JFrame {
         int seconds = elapsedTime % 60;
         timeDisplay.setText(String.format("Time: %d:%02d", minutes, seconds));
     }
-
+    /**
+     * Starts a new game with the specified puzzle type and size.
+     * Generates a new Sudoku puzzle based on the type and updates the sudoku panel.
+     * It updates the button panel with number buttons and starts the game timer.
+     */
     public void startNewGame(PuzzleType puzzleType, int fontSize) {
         Puzzle generatedPuzzle = new Generator().generateRandomSudoku(puzzleType);
         sudokuPanel.loadNewSudokuPuzzle(generatedPuzzle);

@@ -142,7 +142,15 @@ public class Puzzle {
             Arrays.fill(this.mutable[row], true);
         }
     }
-
+    /**
+     * Generates a solved Sudoku puzzle of the specific dimensions.
+     *
+     * @param numRows
+     * @param numCols
+     * @param boxWidth
+     * @param boxHeight
+     * @param validValues
+     */
     public static Puzzle generateSolvedPuzzle(int numRows, int numCols, int boxWidth, int boxHeight, String[] validValues) {
         Puzzle puzzle = new Puzzle(numRows, numCols, boxWidth, boxHeight, validValues);
         solvePuzzle(puzzle, 0, 0);
@@ -170,7 +178,16 @@ public class Puzzle {
         }
         return solvePuzzle(puzzle, row + 1, col);
     }
-
+    /**
+     * Generates a random Sudoku puzzle of the specified dimensions with a given number of empty cells.
+     *
+     * @param numRows
+     * @param numCols
+     * @param boxWidth
+     * @param boxHeight
+     * @param validValues
+     * @param numEmptyCells
+     */
     public static Puzzle generateRandomPuzzle(int numRows, int numCols, int boxWidth, int boxHeight, String[] validValues, int numEmptyCells) {
         Puzzle solvedPuzzle = generateSolvedPuzzle(numRows, numCols, boxWidth, boxHeight, validValues);
         Puzzle randomPuzzle = new Puzzle(solvedPuzzle);
@@ -185,7 +202,11 @@ public class Puzzle {
         }
         return randomPuzzle;
     }
-
+    /**
+     * Checks if the Sudoku puzzle is fully solved.
+     *
+     * @return
+     */
     public boolean isSolved() {
         for (String[] row : this.board) {
             for (String cell : row) {
@@ -196,7 +217,11 @@ public class Puzzle {
         }
         return true;
     }
-
+    /**
+     * Checks if the Sudoku puzzle is in a valid state.
+     *
+     * @return
+     */
     public boolean isValid() {
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
@@ -208,14 +233,32 @@ public class Puzzle {
         return true;
     }
 
+    /**
+     * Checks if a cell in the puzzle is mutable.
+     * @param row
+     * @param col
+     * @return
+     */
     public boolean isMutable(int row, int col) {
         return Mutable(row, col);
     }
-
+    /**
+     * Sets the mutability of a cell in the puzzle.
+     *
+     * @param row
+     * @param col
+     * @param isMutable
+     */
     public void setMutable(int row, int col, boolean isMutable) {
         mutable[row][col] = isMutable;
     }
-
+    /**
+     * Sets the value of a cell in the puzzle.
+     *
+     * @param row
+     * @param col
+     * @param value
+     */
     public void setCell(int row, int col, String value) {
         if (inRange(row, col) && RightValue(value)) {
             board[row][col] = value;

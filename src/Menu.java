@@ -3,6 +3,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Menu class is the main menu of the Sudoku game.
+ * It extends JFrame and implements ActionListener for handling button clicks.
+ */
 public class Menu extends JFrame implements ActionListener {
     private JPanel topPanel = new JPanel();
     private JPanel midPanel = new JPanel();
@@ -13,6 +17,11 @@ public class Menu extends JFrame implements ActionListener {
     private JLabel modeLabel = new JLabel("Select Mode:");
     private Timer colorTimer;
 
+
+    /**
+     * Constructs a new Menu object.
+     * Initializes components, configures the frame, and starts the color change timer.
+     */
     public Menu() {
         initializeComponents();
         configureFrame();

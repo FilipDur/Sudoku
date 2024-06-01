@@ -1,4 +1,7 @@
 public enum PuzzleType {
+    /**
+     * Enum with different types of Sudoku puzzles.
+     */
     SIX_BY_SIX(6, 6, 3, 2, new String[] {"1", "2", "3", "4", "5", "6"}, "6 By 6 Game"),
     NINE_BY_NINE(9, 9, 3, 3, new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9"}, "9 By 9 Game"),
     TWELVE_BY_TWELVE(12, 12, 4, 3, new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}, "12 By 12 Game"),
@@ -11,6 +14,16 @@ public enum PuzzleType {
     private final String[] validValues;
     private final String description;
 
+    /**
+     * /**
+     *      * Constructor for PuzzleType enum.
+     * @param numberofRows
+     * @param numberofCols
+     * @param Width
+     * @param Height
+     * @param validValues
+     * @param description
+     */
     private PuzzleType(int numberofRows, int numberofCols, int Width, int Height, String[] validValues, String description) {
         this.numberofRows = numberofRows;
         this.numberofCols = numberofCols;

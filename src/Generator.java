@@ -4,7 +4,14 @@ import java.util.List;
 import java.util.Random;
 
 public class Generator {
-
+    /**
+     * Generates a random Sudoku puzzle of the specified type.
+     * It creates a new puzzle, fills it with random values in the first column,
+     * solves the puzzle, and retains a portion of the solution to make it playable.
+     *
+     * @param puzzleType
+     * @return
+     */
     public Puzzle generateRandomSudoku(PuzzleType puzzleType) {
         Puzzle puzzle = new Puzzle(puzzleType.getNumberofRows(), puzzleType.getNumberofCols(), puzzleType.getWidth(), puzzleType.getHeight(), puzzleType.getValidValues());
         Puzzle puzzleCopy = new Puzzle(puzzle);
@@ -34,7 +41,15 @@ public class Generator {
 
         return puzzle;
     }
-
+    /**
+     * Recursively solves a Sudoku puzzle.
+     * It starts solving from the specified row and column.
+     *
+     * @param row    T
+     * @param col
+     * @param puzzle
+     * @return
+     */
     private boolean solveSudoku(int row, int col, Puzzle puzzle) {
 
         if (!puzzle.inRange(row, col)) {

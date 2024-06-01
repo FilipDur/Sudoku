@@ -17,7 +17,10 @@ public class Panel extends JPanel {
     private Color bgColor;
     private Timer autoColorTimer;
     private JPanel topPanel = new JPanel();
-
+    /**
+     * Constructs a new Panel object with default settings.
+     * Initializes the panel size, mouse listener, current puzzle.
+     */
     public Panel() {
         this.setPreferredSize(new Dimension(540, 450));
         this.addMouseListener(new SudokuPanelMouseAdapter());
@@ -79,7 +82,10 @@ public class Panel extends JPanel {
         panelHeight = (this.getHeight() / currentPuzzle.getNumRows()) * currentPuzzle.getNumRows();
         g2d.fillRect(0, 0, panelWidth, panelHeight);
     }
-
+    /**
+     * drawGrid was created by using youtube video that's been given credit in documentation.
+     * @param g
+     */
     private void drawGrid(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         int slotWidth = this.getWidth() / currentPuzzle.getNumCols();
@@ -106,7 +112,13 @@ public class Panel extends JPanel {
             }
         }
     }
-
+    /**
+     * Draws the numbers of the Sudoku puzzle on the panel.
+     * It uses the specified Fond for text size and the current puzzle to render the numbers.
+     * The numbers are centered in each cell of the puzzle grid.
+     *
+     * @param g the graphics context used for drawing.
+     */
     private void drawNumbers(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         Font font = new Font("Times New Roman", Font.PLAIN, textSize);
@@ -137,7 +149,12 @@ public class Panel extends JPanel {
             g2d.fillRect(selectedCol * slotWidth, selectedRow * slotHeight, slotWidth, slotHeight);
         }
     }
-
+    /**
+     *  Handles the press of a number button.
+     *  * If you have selected a cell, this updates the cell with the number you pressed.
+     *  * It refreshes the panel to show the updated puzzle.
+     *  * If the puzzle is solved after your move, it shows a message saying you've finished.
+     */
     public void handleNumberButtonPress(String buttonValue) {
         if (selectedCol != -1 && selectedRow != -1) {
             currentPuzzle.makeMove(selectedRow, selectedCol, buttonValue, true);
@@ -209,8 +226,14 @@ public class Panel extends JPanel {
         selectedRow = -1;
         repaint();
     }
-
-
+    /**
+     * Updates the size of the panel and its components.
+     * It sets the panels size,
+     * then revalidates and repaints the panel.
+     *
+     * @param width  the new width of the panel.
+     * @param height the new height of the panel.
+     */
     public void updatePanelSize(int width, int height) {
         this.panelWidth = width;
         this.panelHeight = height;
